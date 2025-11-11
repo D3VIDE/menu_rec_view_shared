@@ -3,6 +3,7 @@ package devide.apps.navigation
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
@@ -27,20 +28,14 @@ class BahanAdapter(
                 Picasso.get()
                     .load(bahan.gambarUrl)
                     .placeholder(R.drawable.ic_placeholder)
-                    .error(R.drawable.ic_placeholder)
-                    .resize(100, 100) // Optional: resize gambar
-                    .centerCrop()     // Optional: crop ke tengah
+                    .resize(120, 120)
+                    .centerCrop()
                     .into(binding.imgBahan)
-
-                // Tampilkan URL singkat
-                binding.tvGambarUrl.text = "Gambar: ${getShortUrl(bahan.gambarUrl)}"
-                binding.tvGambarUrl.visibility = View.VISIBLE
             } else {
                 binding.imgBahan.setImageResource(R.drawable.ic_placeholder)
-                binding.tvGambarUrl.visibility = View.GONE
             }
 
-            // Set icon keranjang berdasarkan status
+            // Setup keranjang icon
             val keranjangIcon = if (bahan.diKeranjang) {
                 R.drawable.ic_cart_outline
             } else {
@@ -48,55 +43,44 @@ class BahanAdapter(
             }
             binding.btnKeranjang.setImageResource(keranjangIcon)
 
-            // Setup spinner untuk mengubah kategori
             setupCategorySpinner(bahan)
 
-            // Setup delete button
-            binding.btnDelete.setOnClickListener {
-                onDeleteClick(bahan)
-            }
+            // Click listeners
+            binding.btnDelete.setOnClickListener { onDeleteClick(bahan) }
+            binding.btnKeranjang.setOnClickListener { onKeranjangClick(bahan) }
 
-            // Setup keranjang button
-            binding.btnKeranjang.setOnClickListener {
-                onKeranjangClick(bahan)
+            // Optional: Click pada item untuk detail
+            binding.root.setOnClickListener {
+                // Intent ke detail activity/fragment
             }
         }
 
         private fun setupCategorySpinner(bahan: Bahan) {
-            val kategoriList = BahanRepository.getKategoriList()
-            val spinnerAdapter = ArrayAdapter(
+            val kategoriList = listOf("Sayuran", "Daging", "Bumbu", "Buah", "Lainnya")
+            val adapter = ArrayAdapter(
                 binding.root.context,
                 android.R.layout.simple_spinner_item,
                 kategoriList
             )
-            spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-            binding.spinnerEditKategori.adapter = spinnerAdapter
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            binding.spinnerEditKategori.adapter = adapter
 
-            // Set selected item berdasarkan kategori saat ini
             val currentIndex = kategoriList.indexOf(bahan.kategori)
             if (currentIndex != -1) {
                 binding.spinnerEditKategori.setSelection(currentIndex)
             }
 
-            // Handle perubahan kategori
-            binding.spinnerEditKategori.onItemSelectedListener = object : android.widget.AdapterView.OnItemSelectedListener {
-                override fun onItemSelected(parent: android.widget.AdapterView<*>?, view: android.view.View?, position: Int, id: Long) {
-                    val newKategori = kategoriList[position]
-                    if (newKategori != bahan.kategori) {
-                        onCategoryChange(bahan, newKategori)
+            binding.spinnerEditKategori.onItemSelectedListener =
+                object : AdapterView.OnItemSelectedListener {
+                    override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                        val newKategori = kategoriList[position]
+                        if (newKategori != bahan.kategori) {
+                            onCategoryChange(bahan, newKategori)
+                        }
                     }
+
+                    override fun onNothingSelected(parent: AdapterView<*>?) {}
                 }
-
-                override fun onNothingSelected(parent: android.widget.AdapterView<*>?) {}
-            }
-        }
-
-        private fun getShortUrl(url: String): String {
-            return if (url.length > 30) {
-                "${url.substring(0, 27)}..."
-            } else {
-                url
-            }
         }
     }
 

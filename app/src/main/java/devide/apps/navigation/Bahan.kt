@@ -9,8 +9,14 @@ data class Bahan(
 ) {
     companion object {
         private var idCounter = 0
+
         fun getNextId(): Int {
             return idCounter++
+        }
+
+        // Fungsi baru untuk reset ID counter
+        fun getResetId() {
+            idCounter = 0
         }
     }
 }

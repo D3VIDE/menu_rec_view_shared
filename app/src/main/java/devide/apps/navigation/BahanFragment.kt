@@ -5,8 +5,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
+import android.widget.Spinner
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import devide.apps.navigation.databinding.FragmentBahanBinding
 
 class BahanFragment : Fragment() {
@@ -26,24 +30,38 @@ class BahanFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        setupUI()
         setupRecyclerView()
-        setupSpinner()
-        setupAddButton()
-        refreshData()
+        loadInitialData()
+    }
+
+    private fun setupUI() {
+        // Setup kategori spinner untuk input baru
+        val kategoriAdapter = ArrayAdapter(
+            requireContext(),
+            android.R.layout.simple_spinner_item,
+            listOf("Sayuran", "Daging", "Bumbu", "Buah", "Lainnya")
+        )
+        kategoriAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        binding.spinnerKategori.adapter = kategoriAdapter
+
+        // Setup add button
+        binding.btnTambahBahan.setOnClickListener {
+            addNewBahan()
+        }
     }
 
     private fun setupRecyclerView() {
         adapter = BahanAdapter(
             bahanList = emptyList(),
             onDeleteClick = { bahan ->
-                BahanRepository.deleteBahan(bahan.id)
-                refreshData()
+                showDeleteConfirmation(bahan)
             },
             onCategoryChange = { bahan, newKategori ->
                 BahanRepository.updateBahan(bahan.id, newKategori)
                 refreshData()
             },
-            onKeranjangClick = { bahan ->  // TAMBAHKAN INI
+            onKeranjangClick = { bahan ->
                 BahanRepository.toggleKeranjang(bahan.id)
                 refreshData()
             }
@@ -52,42 +70,50 @@ class BahanFragment : Fragment() {
         binding.recyclerViewBahan.apply {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = this@BahanFragment.adapter
+            addItemDecoration(DividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL))
         }
     }
 
-    private fun setupSpinner() {
-        val kategoriList = BahanRepository.getKategoriList()
-        val spinnerAdapter = ArrayAdapter(
-            requireContext(),
-            android.R.layout.simple_spinner_item,
-            kategoriList
-        )
-        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        binding.spinnerKategori.adapter = spinnerAdapter
+    private fun loadInitialData() {
+        BahanRepository.initializeData(requireContext())
+        refreshData()
     }
 
-    private fun setupAddButton() {
-        binding.btnTambahBahan.setOnClickListener {
-            val namaBahan = binding.etNamaBahan.text.toString().trim()
-            val gambarUrl = binding.etGambarUrl.text.toString().trim()
-            val kategori = binding.spinnerKategori.selectedItem.toString()
+    private fun addNewBahan() {
+        val nama = binding.etNamaBahan.text.toString().trim()
+        val gambarUrl = binding.etGambarUrl.text.toString().trim()
+        val kategori = binding.spinnerKategori.selectedItem.toString()
 
-            if (namaBahan.isEmpty()) {
-                binding.etNamaBahan.error = "Nama bahan tidak boleh kosong"
-                return@setOnClickListener
+        if (nama.isEmpty()) {
+            binding.etNamaBahan.error = "Nama bahan harus diisi"
+            return
+        }
+
+        BahanRepository.addBahan(nama, kategori, gambarUrl)
+        refreshData()
+        clearInputFields()
+
+        // Scroll ke item baru
+        binding.recyclerViewBahan.smoothScrollToPosition(adapter.itemCount - 1)
+    }
+
+    private fun showDeleteConfirmation(bahan: Bahan) {
+        AlertDialog.Builder(requireContext())
+            .setTitle("Hapus Bahan")
+            .setMessage("Hapus ${bahan.nama} dari daftar?")
+            .setPositiveButton("Hapus") { _, _ ->
+                BahanRepository.deleteBahan(bahan.id)
+                refreshData()
             }
-
-            BahanRepository.addBahan(namaBahan, kategori, gambarUrl)
-            refreshData()
-            clearInput()
-        }
+            .setNegativeButton("Batal", null)
+            .show()
     }
 
     private fun refreshData() {
         val allBahan = BahanRepository.getAllBahan()
         adapter.updateData(allBahan)
 
-        // Tampilkan pesan jika tidak ada data
+        // Toggle empty state
         if (allBahan.isEmpty()) {
             binding.textEmpty.visibility = View.VISIBLE
             binding.recyclerViewBahan.visibility = View.GONE
@@ -97,11 +123,10 @@ class BahanFragment : Fragment() {
         }
     }
 
-    private fun clearInput() {
+    private fun clearInputFields() {
         binding.etNamaBahan.text?.clear()
         binding.etGambarUrl.text?.clear()
         binding.spinnerKategori.setSelection(0)
-        binding.etNamaBahan.clearFocus()
     }
 
     override fun onDestroyView() {

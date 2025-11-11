@@ -1,93 +1,116 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="16dp">
 
-    <LinearLayout
-        android:layout_width="match_parent"
+    <!-- Input Section -->
+    <TextView
+        android:id="@+id/titleInput"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:text="Tambah Bahan Baru"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <!-- Input Section -->
-        <TextView
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/inputNama"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        app:boxBackgroundMode="outline"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/titleInput">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/etNamaBahan"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Tambah Bahan Baru"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:layout_marginBottom="16dp" />
+            android:hint="Nama Bahan"
+            android:maxLines="1" />
 
-        <com.google.android.material.textfield.TextInputLayout
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/inputGambar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        app:boxBackgroundMode="outline"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/inputNama">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/etGambarUrl"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            app:boxBackgroundMode="outline">
+            android:hint="URL Gambar (Opsional)"
+            android:maxLines="1" />
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etNamaBahan"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Nama Bahan"
-                android:maxLines="1" />
+    </com.google.android.material.textfield.TextInputLayout>
 
-        </com.google.android.material.textfield.TextInputLayout>
+    <Spinner
+        android:id="@+id/spinnerKategori"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/inputGambar" />
 
-        <!-- Input Gambar URL -->
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            app:boxBackgroundMode="outline">
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnTambahBahan"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Tambah Bahan"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/spinnerKategori" />
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etGambarUrl"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="URL Gambar (Opsional)"
-                android:maxLines="1" />
+    <!-- List Section -->
+    <TextView
+        android:id="@+id/titleList"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:text="Daftar Bahan"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnTambahBahan" />
 
-        </com.google.android.material.textfield.TextInputLayout>
+    <TextView
+        android:id="@+id/textEmpty"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Belum ada bahan yang ditambahkan"
+        android:textSize="16sp"
+        android:gravity="center"
+        android:padding="32dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/titleList" />
 
-        <Spinner
-            android:id="@+id/spinnerKategori"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp" />
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewBahan"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/titleList" />
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnTambahBahan"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Tambah Bahan"
-            android:layout_marginBottom="24dp" />
-
-        <!-- List Section -->
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Daftar Bahan"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:layout_marginBottom="16dp" />
-
-        <TextView
-            android:id="@+id/textEmpty"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Belum ada bahan yang ditambahkan"
-            android:textSize="16sp"
-            android:gravity="center"
-            android:padding="32dp"
-            android:visibility="gone" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerViewBahan"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:nestedScrollingEnabled="false" />
-
-    </LinearLayout>
-
-</ScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,11 +1,36 @@
 package devide.apps.navigation
 
+import android.content.Context
+
 object BahanRepository {
     private val bahanList = mutableListOf<Bahan>()
+    private var isInitialized = false
 
-    fun getAllBahan(): List<Bahan> {
-        return bahanList.toList()
+    fun initializeData(context: Context) {
+        if (isInitialized) return
+
+        val namaArray = context.resources.getStringArray(R.array.data_bahan_nama)
+        val kategoriArray = context.resources.getStringArray(R.array.data_bahan_kategori)
+        val gambarArray = context.resources.getStringArray(R.array.data_bahan_gambar)
+
+        bahanList.clear()
+        Bahan.getResetId()
+
+        val minSize = minOf(namaArray.size, kategoriArray.size, gambarArray.size)
+
+        for (i in 0 until minSize) {
+            val nama = namaArray[i]
+            val kategori = kategoriArray[i]
+            val gambarUrl = gambarArray[i]
+
+            val newBahan = Bahan(Bahan.getNextId(), nama, kategori, gambarUrl)
+            bahanList.add(newBahan)
+        }
+
+        isInitialized = true
     }
+
+    fun getAllBahan(): List<Bahan> = bahanList.toList()
 
     fun addBahan(nama: String, kategori: String, gambarUrl: String = "") {
         val newBahan = Bahan(Bahan.getNextId(), nama, kategori, gambarUrl)
