@@ -1,15 +1,18 @@
 package devide.apps.navigation
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.squareup.picasso.Picasso
 import devide.apps.navigation.databinding.ItemBahanBinding
 
 class BahanAdapter(
     private var bahanList: List<Bahan>,
     private val onDeleteClick: (Bahan) -> Unit,
-    private val onCategoryChange: (Bahan, String) -> Unit
+    private val onCategoryChange: (Bahan, String) -> Unit,
+    private val onKeranjangClick: (Bahan) -> Unit
 ) : RecyclerView.Adapter<BahanAdapter.BahanViewHolder>() {
 
     inner class BahanViewHolder(private val binding: ItemBahanBinding) :
@@ -19,12 +22,43 @@ class BahanAdapter(
             binding.tvNamaBahan.text = bahan.nama
             binding.tvKategori.text = bahan.kategori
 
+            // Load gambar dengan Picasso
+            if (bahan.gambarUrl.isNotEmpty()) {
+                Picasso.get()
+                    .load(bahan.gambarUrl)
+                    .placeholder(R.drawable.ic_placeholder)
+                    .error(R.drawable.ic_placeholder)
+                    .resize(100, 100) // Optional: resize gambar
+                    .centerCrop()     // Optional: crop ke tengah
+                    .into(binding.imgBahan)
+
+                // Tampilkan URL singkat
+                binding.tvGambarUrl.text = "Gambar: ${getShortUrl(bahan.gambarUrl)}"
+                binding.tvGambarUrl.visibility = View.VISIBLE
+            } else {
+                binding.imgBahan.setImageResource(R.drawable.ic_placeholder)
+                binding.tvGambarUrl.visibility = View.GONE
+            }
+
+            // Set icon keranjang berdasarkan status
+            val keranjangIcon = if (bahan.diKeranjang) {
+                R.drawable.ic_cart_outline
+            } else {
+                R.drawable.ic_cart_outline
+            }
+            binding.btnKeranjang.setImageResource(keranjangIcon)
+
             // Setup spinner untuk mengubah kategori
             setupCategorySpinner(bahan)
 
             // Setup delete button
             binding.btnDelete.setOnClickListener {
                 onDeleteClick(bahan)
+            }
+
+            // Setup keranjang button
+            binding.btnKeranjang.setOnClickListener {
+                onKeranjangClick(bahan)
             }
         }
 
@@ -54,6 +88,14 @@ class BahanAdapter(
                 }
 
                 override fun onNothingSelected(parent: android.widget.AdapterView<*>?) {}
+            }
+        }
+
+        private fun getShortUrl(url: String): String {
+            return if (url.length > 30) {
+                "${url.substring(0, 27)}..."
+            } else {
+                url
             }
         }
     }

@@ -7,14 +7,19 @@ object BahanRepository {
         return bahanList.toList()
     }
 
-    fun addBahan(nama: String, kategori: String) {
-        val newBahan = Bahan(Bahan.getNextId(), nama, kategori)
+    fun addBahan(nama: String, kategori: String, gambarUrl: String = "") {
+        val newBahan = Bahan(Bahan.getNextId(), nama, kategori, gambarUrl)
         bahanList.add(newBahan)
     }
 
     fun updateBahan(id: Int, newKategori: String) {
         val bahan = bahanList.find { it.id == id }
         bahan?.kategori = newKategori
+    }
+
+    fun toggleKeranjang(id: Int) {
+        val bahan = bahanList.find { it.id == id }
+        bahan?.diKeranjang = !(bahan?.diKeranjang ?: false)
     }
 
     fun deleteBahan(id: Int) {

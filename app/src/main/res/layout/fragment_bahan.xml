@@ -34,6 +34,22 @@
 
         </com.google.android.material.textfield.TextInputLayout>
 
+        <!-- Input Gambar URL -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            app:boxBackgroundMode="outline">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etGambarUrl"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="URL Gambar (Opsional)"
+                android:maxLines="1" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
         <Spinner
             android:id="@+id/spinnerKategori"
             android:layout_width="match_parent"
@@ -45,8 +61,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Tambah Bahan"
-            android:layout_marginBottom="24dp"
-           />
+            android:layout_marginBottom="24dp" />
 
         <!-- List Section -->
         <TextView

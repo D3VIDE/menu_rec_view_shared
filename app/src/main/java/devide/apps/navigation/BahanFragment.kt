@@ -42,6 +42,10 @@ class BahanFragment : Fragment() {
             onCategoryChange = { bahan, newKategori ->
                 BahanRepository.updateBahan(bahan.id, newKategori)
                 refreshData()
+            },
+            onKeranjangClick = { bahan ->  // TAMBAHKAN INI
+                BahanRepository.toggleKeranjang(bahan.id)
+                refreshData()
             }
         )
 
@@ -65,6 +69,7 @@ class BahanFragment : Fragment() {
     private fun setupAddButton() {
         binding.btnTambahBahan.setOnClickListener {
             val namaBahan = binding.etNamaBahan.text.toString().trim()
+            val gambarUrl = binding.etGambarUrl.text.toString().trim()
             val kategori = binding.spinnerKategori.selectedItem.toString()
 
             if (namaBahan.isEmpty()) {
@@ -72,7 +77,7 @@ class BahanFragment : Fragment() {
                 return@setOnClickListener
             }
 
-            BahanRepository.addBahan(namaBahan, kategori)
+            BahanRepository.addBahan(namaBahan, kategori, gambarUrl)
             refreshData()
             clearInput()
         }
@@ -94,6 +99,7 @@ class BahanFragment : Fragment() {
 
     private fun clearInput() {
         binding.etNamaBahan.text?.clear()
+        binding.etGambarUrl.text?.clear()
         binding.spinnerKategori.setSelection(0)
         binding.etNamaBahan.clearFocus()
     }
