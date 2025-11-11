@@ -6,6 +6,10 @@
             android:icon="@drawable/outline_apartment_24"
             android:title="HOME"/>
         <item
+            android:id="@+id/bahanFragment"
+            android:icon="@drawable/ic_ingredients"
+            android:title="BAHAN"/>
+        <item
             android:id="@+id/profileFragment"
             android:icon="@drawable/outline_circle_24"
             android:title="PROFILE"/>

@@ -11,6 +11,14 @@
         android:name="devide.apps.navigation.HomeFragment"
         android:label="home"
         tools:layout="@layout/fragment_home" />
+
+    <fragment
+        android:id="@+id/bahanFragment"
+        android:name="devide.apps.navigation.BahanFragment"
+        android:label="bahan"
+        tools:layout="@layout/fragment_bahan" />
+
+
     <fragment
         android:id="@+id/profileFragment"
         android:name="devide.apps.navigation.ProfileFragment"
